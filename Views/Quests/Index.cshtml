@@ -1,0 +1,71 @@
+﻿@model IEnumerable<TaskTimePredicter.Models.Quest>
+
+@{
+    ViewData["Title"] = "Lista Tareas";
+}
+
+<h1>Lista de Tareas</h1>
+
+<p>
+    <a asp-action="Create">Crear Nueva Tarea</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Nombre Tarea
+            </th>
+            <th>
+                Tiempo Estimado
+            </th>
+            <th>
+                Tiempo Actual
+            </th>
+            <th>
+                Estado Tarea
+            </th>
+            <th>
+                Fecha Creación
+            </th>
+            <th>
+                Usuario Asignado
+            </th>
+            <th>
+                Categoría
+            </th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.QuestName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EstimatedTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActualTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.QuestState)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreationDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.UserEmail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.CategoryName)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.QuestId">Detalles</a> |
+                <a asp-action="Edit" asp-route-id="@item.QuestId">Editar</a> |
+                <a asp-action="Delete" asp-route-id="@item.QuestId">Eliminar</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

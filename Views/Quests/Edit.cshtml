@@ -1,0 +1,49 @@
+﻿@model TaskTimePredicter.Models.Quest
+
+@{
+    ViewData["Title"] = "Editar Tarea";
+}
+
+<h1>Editar Tarea</h1>
+
+<h4>Tarea Seleccionada</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="QuestId" />
+            <div class="form-group">
+                <label class="control-label">Nombre Tarea</label>
+                <input asp-for="QuestName" class="form-control" />
+                <span asp-validation-for="QuestName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Tiempo Estimado para completarla</label>
+                <input asp-for="EstimatedTime" class="form-control" />
+                <span asp-validation-for="EstimatedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Usuario Asignado</label>
+                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Categoría</label>
+                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Guardar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Volver a la Lista de Tareas</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
