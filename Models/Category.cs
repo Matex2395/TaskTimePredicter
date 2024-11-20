@@ -11,6 +11,6 @@ namespace TaskTimePredicter.Models
         [Required]
         public required string CategoryName { get; set; }
         public string? CategoryDescription { get; set; }
-        public ICollection<Quest> Quests { get; set; } = new List<Quest>();
+        public virtual ICollection<Quest> Quests { get; set; } = new List<Quest>();
     }
 }

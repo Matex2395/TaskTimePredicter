@@ -18,6 +18,6 @@ namespace TaskTimePredicter.Models
         public required string UserRole { get; set; }
         [Required]
         public DateOnly CreatedAt { get; set; }
-        public ICollection<Quest> Quests { get; set; } = new List<Quest>();
+        public virtual ICollection<Quest> Quests { get; set; } = new List<Quest>();
     }
 }
