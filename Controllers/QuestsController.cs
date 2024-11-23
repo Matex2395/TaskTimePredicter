@@ -49,7 +49,12 @@ namespace TaskTimePredicter.Controllers
         // GET: Quests/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName");
+            var categories = _context.Categories.Select(c => new SelectListItem
+            {
+                Value = c.CategoryId.ToString(),
+                Text = c.CategoryName
+            }).ToList();
+            ViewData["Categories"] = categories;
             ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserEmail");
             return View();
         }
