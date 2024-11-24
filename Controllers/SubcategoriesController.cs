@@ -74,7 +74,6 @@ namespace TaskTimePredicter.Controllers
                 {
                     TempData["ErrorMessage"] = "Seleccione una Categoría para Asociar";
                 }
-                return View(subcategory);
             }
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", subcategory.CategoryId);
             return View(subcategory);
@@ -113,6 +112,11 @@ namespace TaskTimePredicter.Controllers
             {
                 try
                 {
+                    if (subcategory.CategoryId.HasValue)
+                    {
+                        subcategory.Category = await _context.Categories
+                            .FirstOrDefaultAsync(c => c.CategoryId == subcategory.CategoryId.Value);
+                    }
                     _context.Update(subcategory);
                     await _context.SaveChangesAsync();
                 }
