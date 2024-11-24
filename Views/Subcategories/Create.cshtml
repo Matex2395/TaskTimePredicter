@@ -31,6 +31,12 @@
             <div class="form-group">
                 <input type="submit" value="Crear Subcategoría" class="btn btn-primary" />
             </div>
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
         </form>
     </div>
 </div>
@@ -41,11 +47,4 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
-
-@if (TempData["ErrorMessage"] != null)
-{
-    <script>
-        alert('@TempData["ErrorMessage"]');
-    </script>
 }
