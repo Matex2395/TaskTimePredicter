@@ -1,23 +1,23 @@
 ﻿@model TaskTimePredicter.Models.Project
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalles Proyecto";
 }
 
-<h1>Details</h1>
+<h1>Detalles del Proyecto</h1>
 
 <div>
     <h4>Project</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProjectName)
+            Nombre de Proyecto
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.ProjectName)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProjectDescription)
+            Descripción del Proyecto
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.ProjectDescription)
@@ -25,6 +25,5 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.ProjectId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Volver a la Lista de Proyectos</a>
 </div>
