@@ -1,36 +1,35 @@
 ﻿@model TaskTimePredicter.Models.Subcategory
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalles Subcategoría";
 }
 
-<h1>Details</h1>
+<h1>Detalles de la Subcategoría</h1>
 
 <div>
-    <h4>Subcategory</h4>
+    <h4>Subcategoría Seleccionada</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SubcategoryName)
+        <dt class="col-sm-2">
+            Nombre de la Subcategoría
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.SubcategoryName)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SubcategoryDescription)
+        <dt class="col-sm-2">
+            Descripción de la Subcategoría
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.SubcategoryDescription)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
+        <dt class="col-sm-2">
+            Categoría Asociada
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Category.CategoryName)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.SubcategoryId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Volver a la Lista de Subcategorías</a>
 </div>
