@@ -3,15 +3,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TaskTimePredicter.Models
 {
-    public class Category
+    public class Subcategory
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CategoryId { get; set; }
+        public int SubcategoryId { get; set; }
         [Required]
-        public required string CategoryName { get; set; }
-        public string? CategoryDescription { get; set; }
+        public required string SubcategoryName { get; set; }
+        public string? SubcategoryDescription { get; set; }
+
+        public int? CategoryId { get; set; }
+        public virtual Category? Category { get; set; }
         public virtual ICollection<Quest> Quests { get; set; } = new List<Quest>();
-        public virtual ICollection<Subcategory> Subcategories { get; set; } = new List<Subcategory>();
     }
 }

@@ -21,5 +21,10 @@ namespace TaskTimePredicter.Models
         public virtual User? User { get; set; }
         public int? CategoryId { get; set; }
         public virtual Category? Category { get; set; }
+        public int? SubcategoryId { get; set; }
+        public virtual Subcategory? Subcategory { get; set; }
+        public int? ProjectId { get; set; }
+        public virtual Project? Project { get; set; }
+
     }
 }

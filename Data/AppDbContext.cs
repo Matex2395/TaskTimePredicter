@@ -14,6 +14,8 @@ namespace TaskTimePredicter.Data
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Quest> Quests { get; set; }
+        public virtual DbSet<Project> Projects { get; set; }
+        public virtual DbSet<Subcategory> Subcategories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -84,7 +86,7 @@ namespace TaskTimePredicter.Data
                     .HasMaxLength(50)
                     .HasDefaultValue("In Progress")
                     .HasColumnName("questState");
-                entity.Property(e =>  e.UserId).HasColumnName("userId");
+                entity.Property(e => e.UserId).HasColumnName("userId");
                 //Relaciones FK
                 entity.HasOne(d => d.User)
                     .WithMany()
@@ -94,7 +96,49 @@ namespace TaskTimePredicter.Data
                     .WithMany()
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.SetNull);
+                entity.HasOne(d => d.Subcategory)
+                    .WithMany()
+                    .HasForeignKey(d => d.SubcategoryId)
+                    .OnDelete(DeleteBehavior.SetNull);
+                entity.HasOne(d => d.Project)
+                    .WithMany()
+                    .HasForeignKey(d => d.ProjectId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
+
+            //Tabla "Subcategories"
+            modelBuilder.Entity<Subcategory>(entity =>
+            {
+                entity.HasKey(e => e.SubcategoryId);
+
+                entity.Property(e => e.SubcategoryId).HasColumnName("subcategoryId");
+                entity.Property(e => e.SubcategoryDescription)
+                    .HasMaxLength(255)
+                    .HasColumnName("subcategoryDescription");
+                entity.Property(e => e.SubcategoryName)
+                    .HasMaxLength(100)
+                    .HasColumnName("subcategoryName");
+                //Relaciones FK
+                entity.HasOne(d => d.Category)
+                    .WithMany()
+                    .HasForeignKey(d => d.CategoryId)
+                    .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            //Tabla "Projects"
+            modelBuilder.Entity<Project>(entity =>
+            {
+                entity.HasKey(e => e.ProjectId);
+
+                entity.Property(e => e.ProjectId).HasColumnName("projectId");
+                entity.Property(e => e.ProjectName)
+                    .HasMaxLength(100)
+                    .HasColumnName("projectName");
+                entity.Property(e => e.ProjectDescription)
+                    .HasMaxLength(255)
+                    .HasColumnName("projectDescription");
+            });
+            
         }
     }
 }
