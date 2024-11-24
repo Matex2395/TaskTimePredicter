@@ -12,22 +12,22 @@ using TaskTimePredicter.Models;
 namespace TaskTimePredicter.Controllers
 {
     [Authorize]
-    public class CategoriesController : Controller
+    public class ProjectsController : Controller
     {
         private readonly AppDbContext _context;
 
-        public CategoriesController(AppDbContext context)
+        public ProjectsController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: Categories
+        // GET: Projects
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.ToListAsync());
+            return View(await _context.Projects.ToListAsync());
         }
 
-        // GET: Categories/Details/5
+        // GET: Projects/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -35,39 +35,39 @@ namespace TaskTimePredicter.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
-            if (category == null)
+            var project = await _context.Projects
+                .FirstOrDefaultAsync(m => m.ProjectId == id);
+            if (project == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(project);
         }
 
-        // GET: Categories/Create
+        // GET: Projects/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Categories/Create
+        // POST: Projects/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CategoryId,CategoryName,CategoryDescription")] Category category)
+        public async Task<IActionResult> Create([Bind("ProjectId,ProjectName,ProjectDescription")] Project project)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(category);
+                _context.Add(project);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            return View(project);
         }
 
-        // GET: Categories/Edit/5
+        // GET: Projects/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -75,22 +75,22 @@ namespace TaskTimePredicter.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
+            var project = await _context.Projects.FindAsync(id);
+            if (project == null)
             {
                 return NotFound();
             }
-            return View(category);
+            return View(project);
         }
 
-        // POST: Categories/Edit/5
+        // POST: Projects/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CategoryId,CategoryName,CategoryDescription")] Category category)
+        public async Task<IActionResult> Edit(int id, [Bind("ProjectId,ProjectName,ProjectDescription")] Project project)
         {
-            if (id != category.CategoryId)
+            if (id != project.ProjectId)
             {
                 return NotFound();
             }
@@ -99,12 +99,12 @@ namespace TaskTimePredicter.Controllers
             {
                 try
                 {
-                    _context.Update(category);
+                    _context.Update(project);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryExists(category.CategoryId))
+                    if (!ProjectExists(project.ProjectId))
                     {
                         return NotFound();
                     }
@@ -115,10 +115,10 @@ namespace TaskTimePredicter.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            return View(project);
         }
 
-        // GET: Categories/Delete/5
+        // GET: Projects/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -126,34 +126,34 @@ namespace TaskTimePredicter.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
-            if (category == null)
+            var project = await _context.Projects
+                .FirstOrDefaultAsync(m => m.ProjectId == id);
+            if (project == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(project);
         }
 
-        // POST: Categories/Delete/5
+        // POST: Projects/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            if (category != null)
+            var project = await _context.Projects.FindAsync(id);
+            if (project != null)
             {
-                _context.Categories.Remove(category);
+                _context.Projects.Remove(project);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoryExists(int id)
+        private bool ProjectExists(int id)
         {
-            return _context.Categories.Any(e => e.CategoryId == id);
+            return _context.Projects.Any(e => e.ProjectId == id);
         }
     }
 }
