@@ -22,6 +22,7 @@ namespace TaskTimePredicter.Controllers
         // GET: Users
         public async Task<IActionResult> Index()
         {
+            if (User.IsInRole("Developer")) return RedirectToAction("Restricted", "Access");
             return View(await _context.Users.ToListAsync());
         }
 
