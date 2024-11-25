@@ -12,6 +12,7 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="QuestState" value="En Progreso" />
             <div class="form-group">
                 <label class="control-label">Nombre Tarea</label>
                 <input asp-for="QuestName" class="form-control" />
@@ -20,18 +21,29 @@
             <div class="form-group">
                 <label class="control-label">Tiempo Estimado para completar la tarea</label>
                 <input asp-for="EstimatedTime" class="form-control" />
-                <span asp-validation-for="EstimatedTime" class="text-danger"></span>
+                <span asp-validation-for="EstimatedTime" class="|text-danger"></span>
             </div>
             <div class="form-group">
-                <label class="control-label">Categoría a la que pertenece</label>
-                <select asp-for="CategoryId" class ="form-control" asp-items="ViewBag.Categories">
-                    <option value="">-- Seleccione una Categoría --</option>
+                <label class="control-label">Subcategoría a la que pertenece</label>
+                <select asp-for="SubcategoryId" class="form-control" asp-items="ViewBag.SubcategoryId">
+                    <option value="">-- Seleccione una Subcategoría --</option>
                 </select>
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Proyecto al que pertenece</label>
+                <select asp-for="ProjectId" class="form-control" asp-items="ViewBag.ProjectId">
+                    <option value="">-- Seleccione un Proyecto --</option>
+                </select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Crear Tarea" class="btn btn-primary" />
             </div>
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
         </form>
     </div>
 </div>

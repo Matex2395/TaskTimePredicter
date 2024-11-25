@@ -77,7 +77,8 @@ namespace TaskTimePredicter.Controllers
             List<Claim> claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name, found_user.UserName),
-                new Claim(ClaimTypes.Role, found_user.UserRole)
+                new Claim(ClaimTypes.Role, found_user.UserRole),
+                new Claim(ClaimTypes.NameIdentifier, found_user.UserId.ToString())
             };
 
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

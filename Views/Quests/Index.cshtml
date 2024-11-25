@@ -61,7 +61,7 @@
                 @Html.DisplayFor(modelItem => item.CreationDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.User.UserEmail)
+                @Html.DisplayFor(modelItem => item.User.UserName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Category.CategoryName)
@@ -73,9 +73,9 @@
                 @Html.DisplayFor(modelItem => item.Project.ProjectName)
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.QuestId">Detalles</a> |
-                <a asp-action="Edit" asp-route-id="@item.QuestId">Editar</a> |
-                <a asp-action="Delete" asp-route-id="@item.QuestId">Eliminar</a>
+                <a asp-action="Details" class="btn btn-primary" asp-route-id="@item.QuestId">Detalles</a> |
+                <a asp-action="Edit" class="btn btn-warning" asp-route-id="@item.QuestId">Editar</a> |
+                <a asp-action="Delete" class="btn btn-danger" asp-route-id="@item.QuestId">Eliminar</a>
             </td>
         </tr>
 }
