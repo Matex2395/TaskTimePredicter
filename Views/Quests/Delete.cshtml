@@ -41,6 +41,18 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Category.CategoryName)
         </dd>
+        <dt class="col-sm-2">
+            Subcategoría de la Tarea
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Subcategory.SubcategoryName)
+        </dd>
+        <dt class="col-sm-2">
+            Proyecto Asignado
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Project.ProjectName)
+        </dd>
     </dl>
     
     <form asp-action="Delete">

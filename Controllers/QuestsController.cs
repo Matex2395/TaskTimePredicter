@@ -40,6 +40,8 @@ namespace TaskTimePredicter.Controllers
             var quest = await _context.Quests
                 .Include(q => q.Category)
                 .Include(q => q.User)
+                .Include(q => q.Subcategory)
+                .Include(q => q.Project)
                 .FirstOrDefaultAsync(m => m.QuestId == id);
             if (quest == null)
             {
@@ -242,6 +244,8 @@ namespace TaskTimePredicter.Controllers
             var quest = await _context.Quests
                 .Include(q => q.Category)
                 .Include(q => q.User)
+                .Include(q => q.Subcategory)
+                .Include(q => q.Project)
                 .FirstOrDefaultAsync(m => m.QuestId == id);
             if (quest == null)
             {
