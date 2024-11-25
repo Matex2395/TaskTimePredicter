@@ -66,6 +66,12 @@ namespace TaskTimePredicter.Controllers
         {
             if (ModelState.IsValid)
             {
+                //Validación 'CreatedAt' != Nulo ni vacío
+                if (quest.CreationDate == default)
+                {
+                    quest.CreationDate = DateOnly.FromDateTime(DateTime.Now);
+                }
+
                 //Búsqueda de Usuario correspondiente por UserId
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (userIdClaim != null)
@@ -135,8 +141,8 @@ namespace TaskTimePredicter.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", quest.CategoryId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserEmail", quest.UserId);
+            ViewData["ProjectId"] = new SelectList(_context.Projects, "ProjectId", "ProjectName");
+            ViewData["SubcategoryId"] = new SelectList(_context.Subcategories, "SubcategoryId", "SubcategoryName");
             return View(quest);
         }
 
@@ -145,7 +151,7 @@ namespace TaskTimePredicter.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("QuestId,QuestName,EstimatedTime,ActualTime,QuestState,CreationDate,UserId,CategoryId")] Quest quest)
+        public async Task<IActionResult> Edit(int id, [Bind("QuestId,QuestName,EstimatedTime,ActualTime,QuestState,CreationDate,UserId,SubcategoryId,ProjectId")] Quest quest)
         {
             if (id != quest.QuestId)
             {
@@ -156,6 +162,54 @@ namespace TaskTimePredicter.Controllers
             {
                 try
                 {
+                    var prevQuest = await _context.Quests.FirstOrDefaultAsync(d => d.QuestId == quest.QuestId);
+                    quest.CreationDate = prevQuest.CreationDate;
+                    //Búsqueda de Usuario correspondiente por UserId
+                    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    if (userIdClaim != null)
+                    {
+                        quest.UserId = int.Parse(userIdClaim);
+                        quest.User = await _context.Users
+                            .FirstOrDefaultAsync(u => u.UserId == quest.UserId.Value);
+                    }
+                    //Búsqueda de Subcategoría correspondiente por SubcategoryId
+                    if (quest.SubcategoryId.HasValue)
+                    {
+                        var subcategory = await _context.Subcategories
+                            .FirstOrDefaultAsync(s => s.SubcategoryId == quest.SubcategoryId.Value);
+                        if (subcategory != null)
+                        {
+                            quest.CategoryId = subcategory.CategoryId;
+                            quest.Category = await _context.Categories
+                                .FirstOrDefaultAsync(c => c.CategoryId == quest.CategoryId);
+                        }
+                        else
+                        {
+                            TempData["ErrorMessage"] = "Subcategoría no válida.";
+                            ViewData["ProjectId"] = new SelectList(_context.Projects, "ProjectId", "ProjectName");
+                            ViewData["SubcategoryId"] = new SelectList(_context.Subcategories, "SubcategoryId", "SubcategoryName");
+                            return View(quest);
+                        }
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Seleccione una Subcategoría para Asociar";
+                        ViewData["ProjectId"] = new SelectList(_context.Projects, "ProjectId", "ProjectName");
+                        ViewData["SubcategoryId"] = new SelectList(_context.Subcategories, "SubcategoryId", "SubcategoryName");
+                        return View(quest);
+                    }
+                    if (quest.ProjectId.HasValue)
+                    {
+                        quest.Project = await _context.Projects
+                            .FirstOrDefaultAsync(p => p.ProjectId == quest.ProjectId.Value);
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Seleccione un Proyecto para Asociar";
+                        ViewData["ProjectId"] = new SelectList(_context.Projects, "ProjectId", "ProjectName");
+                        ViewData["SubcategoryId"] = new SelectList(_context.Subcategories, "SubcategoryId", "SubcategoryName");
+                        return View(quest);
+                    }
                     _context.Update(quest);
                     await _context.SaveChangesAsync();
                 }
@@ -172,8 +226,8 @@ namespace TaskTimePredicter.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", quest.CategoryId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserEmail", quest.UserId);
+            ViewData["ProjectId"] = new SelectList(_context.Projects, "ProjectId", "ProjectName");
+            ViewData["SubcategoryId"] = new SelectList(_context.Subcategories, "SubcategoryId", "SubcategoryName");
             return View(quest);
         }
 
@@ -215,15 +269,6 @@ namespace TaskTimePredicter.Controllers
         private bool QuestExists(int id)
         {
             return _context.Quests.Any(e => e.QuestId == id);
-        }
-
-        public IActionResult GetSubcategories(int categoryId)
-        {
-            var subcategories = _context.Subcategories
-                                        .Where(s => s.CategoryId == categoryId)
-                                        .Select(s => new {id = s.SubcategoryId, name = s.SubcategoryName})
-                                        .ToList();
-            return Json(subcategories);
         }
     }
 }
