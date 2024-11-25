@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using TaskTimePredicter.Data;
 using TaskTimePredicter.Models;
 
@@ -49,6 +50,12 @@ namespace TaskTimePredicter.Controllers
         // GET: Users/Create
         public IActionResult Create()
         {
+            var userRoles = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Desarrollador", Value = "Developer"},
+                new SelectListItem { Text = "Administrador", Value = "Administrator"},
+            };
+            ViewData["UserRole"] = userRoles;
             return View();
         }
 
@@ -59,12 +66,32 @@ namespace TaskTimePredicter.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("UserId,UserName,UserEmail,UserPassword,UserRole,CreatedAt")] User user)
         {
+            var userRoles = new List<SelectListItem>
+                        {
+                            new SelectListItem { Text = "Desarrollador", Value = "Developer"},
+                            new SelectListItem { Text = "Administrador", Value = "Administrator"},
+                        };
             if (ModelState.IsValid)
             {
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //Validación 'CreatedAt' != Nulo ni vacío
+                if (user.CreatedAt==default)
+                {
+                    user.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+                }
+
+                if (user.UserRole.IsNullOrEmpty() || user.UserRole == "")
+                {
+                    TempData["ErrorMessage"] = "Seleccione un Rol para asociar";
+                    ViewData["UserRole"] = userRoles;
+                    return View(user);
+                } else
+                {
+                    _context.Add(user);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
+            ViewData["UserRole"] = userRoles;
             return View(user);
         }
 
