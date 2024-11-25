@@ -22,16 +22,22 @@
                 Tiempo Actual
             </th>
             <th>
-                Estado Tarea
+                Estado
             </th>
             <th>
                 Fecha Creación
             </th>
             <th>
-                Usuario Asignado
+                Responsable
             </th>
             <th>
                 Categoría
+            </th>
+            <th>
+                Subcategoría
+            </th>
+            <th>
+                Proyecto
             </th>
             <th>Acciones</th>
         </tr>
@@ -59,6 +65,12 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Category.CategoryName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Subcategory.SubcategoryName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Project.ProjectName)
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.QuestId">Detalles</a> |
