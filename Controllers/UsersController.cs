@@ -108,6 +108,12 @@ namespace TaskTimePredicter.Controllers
             {
                 return NotFound();
             }
+            var userRoles = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Desarrollador", Value = "Developer"},
+                new SelectListItem { Text = "Administrador", Value = "Administrator"},
+            };
+            ViewData["UserRole"] = userRoles;
             return View(user);
         }
 
@@ -127,6 +133,11 @@ namespace TaskTimePredicter.Controllers
             {
                 try
                 {
+                    //Validación 'CreatedAt' != Nulo ni vacío
+                    if (user.CreatedAt == default)
+                    {
+                        user.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+                    }
                     _context.Update(user);
                     await _context.SaveChangesAsync();
                 }
@@ -143,6 +154,12 @@ namespace TaskTimePredicter.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            var userRoles = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Desarrollador", Value = "Developer"},
+                new SelectListItem { Text = "Administrador", Value = "Administrator"},
+            };
+            ViewData["UserRole"] = userRoles;
             return View(user);
         }
 
