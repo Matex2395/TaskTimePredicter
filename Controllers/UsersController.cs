@@ -133,6 +133,8 @@ namespace TaskTimePredicter.Controllers
             {
                 try
                 {
+                    var prevUser = await _context.Users.FirstOrDefaultAsync(d => d.UserId == user.UserId);
+                    user.CreatedAt = prevUser.CreatedAt;
                     //Validación 'CreatedAt' != Nulo ni vacío
                     if (user.CreatedAt == default)
                     {
