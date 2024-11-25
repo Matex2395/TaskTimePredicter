@@ -29,6 +29,111 @@ namespace TaskTimePredicter.Controllers
             return View(await appDbContext.ToListAsync());
         }
 
+        // GET: Quests/Complete/5
+        public async Task<IActionResult> Complete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var quest = await _context.Quests.FindAsync(id);
+            if (quest == null)
+            {
+                return NotFound();
+            }
+            return View(quest);
+        }
+
+        // POST: Quests/Complete
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Complete(int id, [Bind("QuestId,QuestName,EstimatedTime,ActualTime,QuestState,CreationDate,UserId,SubcategoryId,ProjectId")] Quest quest)
+        {
+            if (id != quest.QuestId)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    //Mantenimiento CreationDate
+                    var prevQuest = await _context.Quests.AsNoTracking().FirstOrDefaultAsync(d => d.QuestId == quest.QuestId);
+                    if (prevQuest == null)
+                    {
+                        return NotFound();
+                    }
+                    quest.CreationDate = prevQuest.CreationDate;
+                    //Búsqueda de Usuario correspondiente por UserId
+                    if (quest.UserId.HasValue)
+                    {
+                        quest.User = await _context.Users
+                            .FirstOrDefaultAsync(u => u.UserId == quest.UserId.Value);
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Usuario no encontrado o no tiene Id asignado";
+                        return View(quest);
+                    }
+                    //Búsqueda de Subcategoría correspondiente por SubcategoryId
+                    if (quest.SubcategoryId.HasValue)
+                    {
+                        quest.Subcategory = await _context.Subcategories
+                            .FirstOrDefaultAsync(s => s.SubcategoryId == quest.SubcategoryId.Value);
+                        var subcategory = await _context.Subcategories
+                            .FirstOrDefaultAsync(s => s.SubcategoryId == quest.SubcategoryId.Value);
+                        if (subcategory != null)
+                        {
+                            quest.CategoryId = subcategory.CategoryId;
+                            quest.Category = await _context.Categories
+                                .FirstOrDefaultAsync(c => c.CategoryId == quest.CategoryId);
+                        }
+                        else
+                        {
+                            TempData["ErrorMessage"] = "Subcategoría no válida.";
+                            ViewData["ProjectId"] = new SelectList(_context.Projects, "ProjectId", "ProjectName");
+                            ViewData["SubcategoryId"] = new SelectList(_context.Subcategories, "SubcategoryId", "SubcategoryName");
+                            return View(quest);
+                        }
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Subcategoría no encontrada o no tiene Id asignado";
+                        return View(quest);
+                    }
+                    //Búsqueda de Proyecto correspondiente por ProyectId
+                    if (quest.ProjectId.HasValue)
+                    {
+                        quest.Project = await _context.Projects
+                            .FirstOrDefaultAsync(p => p.ProjectId == quest.ProjectId.Value);
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Subcategoría no encontrada o no tiene Id asignado";
+                        return View(quest);
+                    }
+                    _context.Update(quest);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!QuestExists(quest.QuestId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            return View(quest);
+        }
+
+
         // GET: Quests/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -85,6 +190,8 @@ namespace TaskTimePredicter.Controllers
                 //Búsqueda de Subcategoría correspondiente por SubcategoryId
                 if (quest.SubcategoryId.HasValue)
                 {
+                    quest.Subcategory = await _context.Subcategories
+                            .FirstOrDefaultAsync(s => s.SubcategoryId == quest.SubcategoryId.Value);
                     var subcategory = await _context.Subcategories
                         .FirstOrDefaultAsync(s => s.SubcategoryId == quest.SubcategoryId.Value);
                     if (subcategory != null)
@@ -177,6 +284,8 @@ namespace TaskTimePredicter.Controllers
                     //Búsqueda de Subcategoría correspondiente por SubcategoryId
                     if (quest.SubcategoryId.HasValue)
                     {
+                        quest.Subcategory = await _context.Subcategories
+                            .FirstOrDefaultAsync(s => s.SubcategoryId == quest.SubcategoryId.Value);
                         var subcategory = await _context.Subcategories
                             .FirstOrDefaultAsync(s => s.SubcategoryId == quest.SubcategoryId.Value);
                         if (subcategory != null)

@@ -7,6 +7,9 @@
 <h1>Lista de Tareas</h1>
 
 <p>
+    ***"Tiempo Estimado"" & "Tiempo Actual" están expresadas en Horas***
+</p>
+<p>
     <a asp-action="Create" class="btn btn-success">Crear Nueva Tarea</a>
 </p>
 <table class="table">
@@ -73,6 +76,7 @@
                 @Html.DisplayFor(modelItem => item.Project.ProjectName)
             </td>
             <td>
+                <a asp-action="Complete" class="btn btn-success" asp-route-id="@item.QuestId">Completar</a> |
                 <a asp-action="Details" class="btn btn-primary" asp-route-id="@item.QuestId">Detalles</a> |
                 <a asp-action="Edit" class="btn btn-warning" asp-route-id="@item.QuestId">Editar</a> |
                 <a asp-action="Delete" class="btn btn-danger" asp-route-id="@item.QuestId">Eliminar</a>
