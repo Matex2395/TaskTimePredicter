@@ -383,5 +383,81 @@ namespace TaskTimePredicter.Controllers
         {
             return _context.Quests.Any(e => e.QuestId == id);
         }
+
+        public IActionResult Analyze()
+        {
+            var proyectos = _context.Projects.ToList();
+            var categorias = _context.Categories.ToList();
+
+            var resultadosProyectos = new List<object>();
+            var resultadosCategorias = new List<object>();
+
+            // Análisis de Productividad por Proyectos
+            foreach (var proyecto in proyectos)
+            {
+                var tareasProyecto = _context.Quests.Where(q => q.ProjectId == proyecto.ProjectId).ToList();
+                double totalTiempoEstimado = 0;
+                double totalTiempoReal = 0;
+
+                foreach (var tarea in tareasProyecto)
+                {
+                    totalTiempoEstimado += tarea.EstimatedTime;
+                    totalTiempoReal += tarea.ActualTime ?? 0;
+                }
+
+                if (totalTiempoEstimado > 0)
+                {
+                    double eficiencia = totalTiempoEstimado / totalTiempoReal * 100;
+                    resultadosProyectos.Add(new
+                    {
+                        Proyecto = proyecto.ProjectName,
+                        TiempoEstimadoTotal = totalTiempoEstimado,
+                        TiempoRealTotal = totalTiempoReal,
+                        Eficiencia = eficiencia
+                    });
+                }
+            }
+
+            // Análisis de Tiempo Promedio por Categoría y Subcategoría
+            var subcategorias = _context.Subcategories.ToList();
+            foreach (var categoria in categorias)
+            {
+                foreach (var subcategoria in subcategorias)
+                {
+                    var tareasSubcategoria = _context.Quests.Where(q => q.SubcategoryId == subcategoria.SubcategoryId).ToList();
+                    double totalTiempoReal = 0;
+                    int count = 0;
+
+                    foreach (var tarea in tareasSubcategoria)
+                    {
+                        if (tarea.ActualTime.HasValue)
+                        {
+                            totalTiempoReal += tarea.ActualTime.Value;
+                            count++;
+                        }
+                    }
+
+                    if (count > 0)
+                    {
+                        double tiempoPromedio = totalTiempoReal / count;
+                        resultadosCategorias.Add(new
+                        {
+                            Categoria = categoria.CategoryName,
+                            Subcategoria = subcategoria.SubcategoryName,
+                            TiempoPromedioReal = tiempoPromedio
+                        });
+                    }
+                }
+            }
+
+            // Combinar los resultados
+            var resultadosCombinados = new
+            {
+                ProductividadProyectos = resultadosProyectos,
+                TiempoPromedioCategorias = resultadosCategorias
+            };
+
+            return View(resultadosCombinados);
+        }
     }
 }
