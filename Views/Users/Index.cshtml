@@ -50,8 +50,17 @@
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.UserId" class="btn btn-primary">Detalles</a> |
-                <a asp-action="Edit" asp-route-id="@item.UserId" class="btn btn-warning">Editar</a> |
-                <a asp-action="Delete" asp-route-id="@item.UserId" class="btn btn-danger">Eliminar</a>
+                @if (item.UserRole == "Administrator")
+                {
+                    <button class="btn btn-secondary" disabled>Editar</button>
+                    <button class="btn btn-secondary" disabled>Eliminar</button>
+                }
+                else 
+                {
+                    <a asp-action="Edit" asp-route-id="@item.UserId" class="btn btn-warning">Editar</a>
+                    <a asp-action="Delete" asp-route-id="@item.UserId" class="btn btn-danger">Eliminar</a>
+
+                }
             </td>
         </tr>
 }

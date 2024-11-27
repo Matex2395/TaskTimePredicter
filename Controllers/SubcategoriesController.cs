@@ -22,6 +22,7 @@ namespace TaskTimePredicter.Controllers
         // GET: Subcategories
         public async Task<IActionResult> Index()
         {
+            if (User.IsInRole("Developer")) return RedirectToAction("Restricted", "Access");
             var appDbContext = _context.Subcategories.Include(s => s.Category);
             return View(await appDbContext.ToListAsync());
         }
