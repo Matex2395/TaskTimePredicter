@@ -10,9 +10,10 @@ namespace TaskTimePredicter.Models
         public int UserId { get; set; }
         [Required]
         public required string UserName { get; set; }
-        [Required]
+        [Required(ErrorMessage = "El correo electrónico es Obligatorio")]
+        [EmailAddress(ErrorMessage = "Ingrese un correo electrónico válido")]
         public required string UserEmail { get; set; }
-        [Required]
+        [Required(ErrorMessage = "La contraseña es Obligatoria")]
         public required string UserPassword { get; set; }
         [Required]
         public required string UserRole { get; set; }

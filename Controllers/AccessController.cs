@@ -33,6 +33,11 @@ namespace TaskTimePredicter.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(UserVM model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
             if (model.Password != model.ConfirmPassword)
             {
                 TempData["ErrorMessage"] = "Las contraseñas no coinciden";
@@ -67,6 +72,11 @@ namespace TaskTimePredicter.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginVM model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
             User? found_user = await _db.Users.FirstOrDefaultAsync(u => u.UserEmail == model.Email && u.UserPassword == model.Password);
             if (found_user == null)
             {

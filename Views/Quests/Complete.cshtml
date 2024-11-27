@@ -29,7 +29,12 @@
         </form>
     </div>
 </div>
-
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
 <div>
     <a asp-action="Index">Volver a la Lista de Tareas</a>
 </div>
