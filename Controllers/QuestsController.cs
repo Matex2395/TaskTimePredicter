@@ -419,38 +419,75 @@ namespace TaskTimePredicter.Controllers
             }
 
             // Análisis de Tiempo Promedio por Categoría y Subcategoría
-            var subcategorias = _context.Subcategories.ToList();
-            foreach (var categoria in categorias)
-            {
-                foreach (var subcategoria in subcategorias)
+            var categoriasTareas = _context.Categories
+                .Select(c => new
                 {
-                    var tareasSubcategoria = _context.Quests.Where(q => q.SubcategoryId == subcategoria.SubcategoryId).ToList();
-                    double totalTiempoReal = 0;
-                    int count = 0;
+                    CategoriaId = c.CategoryId,
+                    CategoriaName = c.CategoryName,
+                    Subcategorias = _context.Subcategories
+                .Where(s => s.CategoryId == c.CategoryId)
+                .Select(s => new
+                {
+                    SubcategoryId = s.SubcategoryId,
+                    SubcategoryName = s.SubcategoryName
+                })
+                .ToList()
+                }).ToList();
 
-                    foreach (var tarea in tareasSubcategoria)
+            foreach (var categoria in categoriasTareas)
+            {
+                if (!categoria.Subcategorias.Any())
+                {
+                    resultadosCategorias.Add(new
                     {
-                        if (tarea.ActualTime.HasValue)
+                        Categoria = categoria.CategoriaName,
+                        Subcategoria = "N/A",
+                        TiempoPromedioReal = 0
+                    });
+                }
+                else
+                {
+                    foreach (var subcategoria in categoria.Subcategorias)
+                    {
+                        var tareasSubcategoria = _context.Quests
+                            .Where(q => q.SubcategoryId == subcategoria.SubcategoryId)
+                            .ToList();
+
+                        double totalTiempoReal = 0;
+                        int count = 0;
+
+                        foreach (var tarea in tareasSubcategoria)
                         {
-                            totalTiempoReal += tarea.ActualTime.Value;
-                            count++;
+                            if (tarea.ActualTime.HasValue)
+                            {
+                                totalTiempoReal += tarea.ActualTime.Value;
+                                count++;
+                            }
                         }
-                    }
 
-                    if (count > 0)
-                    {
-                        double tiempoPromedio = totalTiempoReal / count;
-                        resultadosCategorias.Add(new
+                        if (count > 0)
                         {
-                            Categoria = categoria.CategoryName,
-                            Subcategoria = subcategoria.SubcategoryName,
-                            TiempoPromedioReal = tiempoPromedio
-                        });
+                            double tiempoPromedio = totalTiempoReal / count;
+                            resultadosCategorias.Add(new
+                            {
+                                Categoria = categoria.CategoriaName,
+                                Subcategoria = subcategoria.SubcategoryName,
+                                TiempoPromedioReal = tiempoPromedio
+                            });
+                        }
+                        else
+                        {
+                            resultadosCategorias.Add(new
+                            {
+                                Categoria = categoria.CategoriaName,
+                                Subcategoria = subcategoria.SubcategoryName,
+                                TiempoPromedioReal = 0
+                            });
+                        }
                     }
                 }
             }
 
-            // Combinar los resultados
             var resultadosCombinados = new
             {
                 ProductividadProyectos = resultadosProyectos,
