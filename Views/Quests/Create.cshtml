@@ -20,7 +20,7 @@
             </div>
             <div class="form-group">
                 <label class="control-label">Tiempo Estimado para completar la tarea</label>
-                <input asp-for="EstimatedTime" class="form-control" />
+                <input asp-for="EstimatedTime" class="form-control" type="number" step="0.01" min="0.01" required />
                 <span asp-validation-for="EstimatedTime" class="|text-danger"></span>
             </div>
             <div class="form-group">
