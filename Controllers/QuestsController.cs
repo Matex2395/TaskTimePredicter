@@ -442,6 +442,7 @@ namespace TaskTimePredicter.Controllers
                     {
                         Categoria = categoria.CategoriaName,
                         Subcategoria = "N/A",
+                        TiempoPromedioEstimado = 0,
                         TiempoPromedioReal = 0
                     });
                 }
@@ -454,10 +455,12 @@ namespace TaskTimePredicter.Controllers
                             .ToList();
 
                         double totalTiempoReal = 0;
+                        double totalTiempoEstimado = 0;
                         int count = 0;
 
                         foreach (var tarea in tareasSubcategoria)
                         {
+                            totalTiempoEstimado += tarea.EstimatedTime;
                             if (tarea.ActualTime.HasValue)
                             {
                                 totalTiempoReal += tarea.ActualTime.Value;
@@ -467,12 +470,14 @@ namespace TaskTimePredicter.Controllers
 
                         if (count > 0)
                         {
-                            double tiempoPromedio = totalTiempoReal / count;
+                            double tiempoPromedioReal = totalTiempoReal / count;
+                            double tiempoPromedioEstimado = totalTiempoEstimado / count;
                             resultadosCategorias.Add(new
                             {
                                 Categoria = categoria.CategoriaName,
                                 Subcategoria = subcategoria.SubcategoryName,
-                                TiempoPromedioReal = tiempoPromedio
+                                TiempoPromedioEstimado = tiempoPromedioEstimado,
+                                TiempoPromedioReal = tiempoPromedioReal
                             });
                         }
                         else
@@ -481,6 +486,7 @@ namespace TaskTimePredicter.Controllers
                             {
                                 Categoria = categoria.CategoriaName,
                                 Subcategoria = subcategoria.SubcategoryName,
+                                TiempoPromedioEstimado = 0,
                                 TiempoPromedioReal = 0
                             });
                         }
