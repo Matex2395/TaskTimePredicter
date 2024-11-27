@@ -138,38 +138,40 @@ namespace TaskTimePredicter.Controllers
         }
 
         // GET: Subcategories/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        // PROHIBIDO PARA ADMIN Y DEVELOPER
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var subcategory = await _context.Subcategories
-                .Include(s => s.Category)
-                .FirstOrDefaultAsync(m => m.SubcategoryId == id);
-            if (subcategory == null)
-            {
-                return NotFound();
-            }
+        //    var subcategory = await _context.Subcategories
+        //        .Include(s => s.Category)
+        //        .FirstOrDefaultAsync(m => m.SubcategoryId == id);
+        //    if (subcategory == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(subcategory);
-        }
+        //    return View(subcategory);
+        //}
 
         // POST: Subcategories/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var subcategory = await _context.Subcategories.FindAsync(id);
-            if (subcategory != null)
-            {
-                _context.Subcategories.Remove(subcategory);
-            }
+        // PROHIBIDO PARA ADMIN Y DEVELOPER
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(int id)
+        //{
+        //    var subcategory = await _context.Subcategories.FindAsync(id);
+        //    if (subcategory != null)
+        //    {
+        //        _context.Subcategories.Remove(subcategory);
+        //    }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+        //    await _context.SaveChangesAsync();
+        //    return RedirectToAction(nameof(Index));
+        //}
 
         private bool SubcategoryExists(int id)
         {

@@ -119,37 +119,39 @@ namespace TaskTimePredicter.Controllers
         }
 
         // GET: Projects/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        // PROHIBIDO PARA ADMIN Y DEVELOPER
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var project = await _context.Projects
-                .FirstOrDefaultAsync(m => m.ProjectId == id);
-            if (project == null)
-            {
-                return NotFound();
-            }
+        //    var project = await _context.Projects
+        //        .FirstOrDefaultAsync(m => m.ProjectId == id);
+        //    if (project == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(project);
-        }
+        //    return View(project);
+        //}
 
         // POST: Projects/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var project = await _context.Projects.FindAsync(id);
-            if (project != null)
-            {
-                _context.Projects.Remove(project);
-            }
+        // PROHIBIDO PARA ADMIN Y DEVELOPER
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(int id)
+        //{
+        //    var project = await _context.Projects.FindAsync(id);
+        //    if (project != null)
+        //    {
+        //        _context.Projects.Remove(project);
+        //    }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+        //    await _context.SaveChangesAsync();
+        //    return RedirectToAction(nameof(Index));
+        //}
 
         private bool ProjectExists(int id)
         {
