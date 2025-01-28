@@ -384,6 +384,7 @@ namespace TaskTimePredicter.Controllers
             return _context.Quests.Any(e => e.QuestId == id);
         }
 
+        // CORE
         public IActionResult Analyze()
         {
             var proyectos = _context.Projects.ToList();
@@ -501,6 +502,58 @@ namespace TaskTimePredicter.Controllers
             };
 
             return View(resultadosCombinados);
+        }
+
+        // DEFENSA DEL CORE
+        public async Task<IActionResult> Statistics()
+        {
+            var projectTimesQuery = await _context.Quests
+        .Where(q => q.ActualTime.HasValue && q.ProjectId != null)
+        .GroupBy(q => q.ProjectId)
+        .Select(g => new
+        {
+            ProjectId = g.Key,
+            TotalTime = g.Sum(q => q.ActualTime.Value)
+        })
+        .ToListAsync();
+
+            var projectTimes = projectTimesQuery.ToDictionary(pt => pt.ProjectId.Value, pt => pt.TotalTime);
+
+            if (projectTimes.Count == 0)
+            {
+                return View();
+            }
+
+            //Ordenar por método OrderBy
+            //var maxTimeProject = projectTimes.OrderByDescending(p => p.Value).First();
+            //var minTimeProject = projectTimes.OrderBy(p => p.Value).First();
+
+            var projectTimesList = projectTimes.ToList();
+            KeyValuePair<int, double> maxTimeProject = projectTimesList[0];
+            KeyValuePair<int, double> minTimeProject = projectTimesList[0];
+
+            foreach (var projectTime in projectTimesList)
+            {
+                if (projectTime.Value > maxTimeProject.Value)
+                {
+                    maxTimeProject = projectTime;
+                }
+                else if (projectTime.Value < minTimeProject.Value)
+                {
+                    minTimeProject = projectTime;
+                }
+            }
+
+            var timeDifference = maxTimeProject.Value - minTimeProject.Value;
+            var Estadisticas = new
+            {
+                ProyectoMax = maxTimeProject.Key == minTimeProject.Key ? "N/A" : _context.Projects.Find(maxTimeProject.Key)?.ProjectName,
+                MaxTime = maxTimeProject.Value,
+                ProyectoMin = _context.Projects.Find(minTimeProject.Key)?.ProjectName,
+                MinTime = minTimeProject.Value,
+                DiffMinMax = timeDifference
+            };
+            return View(Estadisticas);
         }
     }
 }

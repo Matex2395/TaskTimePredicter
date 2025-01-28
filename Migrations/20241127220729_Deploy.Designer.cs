@@ -12,8 +12,8 @@ using TaskTimePredicter.Data;
 namespace TaskTimePredicter.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241124211237_AddProjectSubcategoryModels")]
-    partial class AddProjectSubcategoryModels
+    [Migration("20241127220729_Deploy")]
+    partial class Deploy
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -251,7 +251,7 @@ namespace TaskTimePredicter.Migrations
                         new
                         {
                             UserId = 1,
-                            CreatedAt = new DateOnly(2024, 11, 24),
+                            CreatedAt = new DateOnly(2024, 11, 27),
                             UserEmail = "admin@gmail.com",
                             UserName = "Administrador Base",
                             UserPassword = "admin123",

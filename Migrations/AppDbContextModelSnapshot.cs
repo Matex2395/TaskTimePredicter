@@ -248,7 +248,7 @@ namespace TaskTimePredicter.Migrations
                         new
                         {
                             UserId = 1,
-                            CreatedAt = new DateOnly(2024, 11, 24),
+                            CreatedAt = new DateOnly(2024, 11, 27),
                             UserEmail = "admin@gmail.com",
                             UserName = "Administrador Base",
                             UserPassword = "admin123",
