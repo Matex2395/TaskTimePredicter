@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:      
+      checks: write   
 
     env:
       DEPLOY_PATH: C:\Deploy\TaskTimePredicter
@@ -49,8 +51,8 @@ jobs:
     - name: SonarCloud Scan
       run: |
         dotnet tool install --global dotnet-sonarscanner
-        dotnet sonarscanner begin /k:"Matex2395_TaskTimePredicter" /o:"matex2395" /d:sonar.login="${{ secrets.JENKINS_SONARCLOUD_TOKEN }}" /d:sonar.projectBaseDir="."
-        dotnet build ./TaskTimePredicter.sln
+        dotnet sonarscanner begin /k:"Matex2395_TaskTimePredicter" /o:"matex2395" /d:sonar.login="${{ secrets.JENKINS_SONARCLOUD_TOKEN }}"
+        dotnet build ./TaskTimePredicter.sln --no-restore
         dotnet sonarscanner end /d:sonar.login="${{ secrets.JENKINS_SONARCLOUD_TOKEN }}"
     
 
