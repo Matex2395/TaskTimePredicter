@@ -47,10 +47,7 @@ jobs:
     # 7️⃣ SonarCloud analysis (Windows compatible)
     - name: SonarCloud Scan
       run: |
-        dotnet tool install --global dotnet-sonarscanner
-        dotnet sonarscanner begin /k:"Matex2395_TaskTimePredicter" /o:"matex2395" /d:sonar.login="${{ secrets.JENKINS_SONARCLOUD_TOKEN }}"
-        dotnet build ./TaskTimePredicter.sln
-        dotnet sonarscanner end /d:sonar.login="${{ secrets.JENKINS_SONARCLOUD_TOKEN }}"
+        dotnet sonarscanner begin /k:"Matex2395_TaskTimePredicter" /o:"matex2395" /d:sonar.login=${{ secrets.JENKINS_SONARCLOUD_TOKEN }} /d:sonar.projectBaseDir="." /d:sonar.scanner.skipJreProvisioning=true
 
     # 8️⃣ Deploy simulado a máquina local
     - name: Simulated Deploy
