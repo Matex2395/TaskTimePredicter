@@ -11,7 +11,8 @@ jobs:
     runs-on: windows-latest
 
     env:
-      DEPLOY_PATH: C:\Deploy\TaskTimePredicter # Ruta simulada para deploy local
+      DEPLOY_PATH: C:\Deploy\TaskTimePredicter
+      DOTNET_ROOT: C:\Program Files\dotnet
 
     steps:
     # 1️⃣ Descargar el código del repositorio
@@ -47,7 +48,11 @@ jobs:
     # 7️⃣ SonarCloud analysis (Windows compatible)
     - name: SonarCloud Scan
       run: |
-        dotnet sonarscanner begin /k:"Matex2395_TaskTimePredicter" /o:"matex2395" /d:sonar.login=${{ secrets.JENKINS_SONARCLOUD_TOKEN }} /d:sonar.projectBaseDir="." /d:sonar.scanner.skipJreProvisioning=true
+        dotnet tool install --global dotnet-sonarscanner
+        dotnet sonarscanner begin /k:"Matex2395_TaskTimePredicter" /o:"matex2395" /d:sonar.login="${{ secrets.JENKINS_SONARCLOUD_TOKEN }}" /d:sonar.projectBaseDir="."
+        dotnet build ./TaskTimePredicter.sln
+        dotnet sonarscanner end /d:sonar.login="${{ secrets.JENKINS_SONARCLOUD_TOKEN }}"
+    
 
     # 8️⃣ Deploy simulado a máquina local
     - name: Simulated Deploy
@@ -59,11 +64,14 @@ jobs:
     # 9️⃣ Notificación de estado a GitHub
     - name: Post CI status
       uses: actions/github-script@v7
-      if: always()
+      if: always() # Se ejecuta siempre para reportar el estado, incluso si hay fallos
       with:
         script: |
+          // 1. Obtenemos el estado final del job (puede ser 'success' o 'failure')
           const status = '${{ job.status }}';
           const conclusion = status === 'success' ? 'success' : 'failure';
+
+          // 2. Creamos un "Check Run" usando la API de GitHub
           await github.rest.checks.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
@@ -72,7 +80,9 @@ jobs:
             status: 'completed',
             conclusion: conclusion,
             output: {
-              title: Build ${status.toUpperCase()},
-              summary: Build #${process.env.GITHUB_RUN_NUMBER} finalizó con estado: ${status}
+              // --- LA CORRECCIÓN ESTÁ AQUÍ ---
+              // Usamos comillas invertidas (`) para poder insertar variables con ${...}
+              title: `CI Build Status: ${status.toUpperCase()}`,
+              summary: `El workflow #${context.runNumber} finalizó con estado: **${status}**.`
             }
           })
