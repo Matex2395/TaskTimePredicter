@@ -1,4 +1,4 @@
-name: .NET 8 CI
+name: .NET 8 CI with SonarCloud
 
 on:
   push:
@@ -11,26 +11,40 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    # 1️⃣ Descargar el código del repositorio
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    # 2️⃣ Configurar .NET 8 SDK
     - name: Setup .NET 8 SDK
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 8.0.x
 
+    # 3️⃣ Restaurar dependencias
     - name: Restore dependencies
       run: dotnet restore
 
+    # 4️⃣ Construir el proyecto
     - name: Build
       run: dotnet build --configuration Release --no-restore
 
+    # 5️⃣ Ejecutar tests unitarios
     - name: Run tests
       run: dotnet test --logger "trx" --results-directory "TestResults"
 
+    # 6️⃣ Publicar resultados de tests como artifacts descargables
     - name: Publish test results
       if: always()
       uses: actions/upload-artifact@v3
       with:
         name: test-results
         path: TestResults
+
+    # 7️⃣ SonarCloud analysis
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@v2.1.0
+      with:
+        projectKey: Matex2395_TaskTimePredicter   # Cambia por tu Project Key de SonarCloud
+        organization: matex2395         # Cambia por tu organización en SonarCloud
+        token: ${{ secrets.JENKINS_SONARCLOUD_TOKEN }}  # Crea un secret en GitHub con tu token de SonarCloud
