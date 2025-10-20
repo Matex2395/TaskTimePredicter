@@ -11,7 +11,7 @@ namespace TaskTimePredicter.Tests
             int b = 1;
             int result = a + b;
 
-            Assert.Equal(2, result);
+            Xunit.Assert.Equal(2, result);
         }
     }
 }
