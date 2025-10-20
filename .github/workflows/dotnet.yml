@@ -10,7 +10,8 @@ jobs:
   build:
     runs-on: windows-latest
     permissions:      
-      checks: write   
+      checks: write
+      contents: read
 
     env:
       DEPLOY_PATH: C:\Deploy\TaskTimePredicter
@@ -82,8 +83,6 @@ jobs:
             status: 'completed',
             conclusion: conclusion,
             output: {
-              // --- LA CORRECCIÓN ESTÁ AQUÍ ---
-              // Usamos comillas invertidas (`) para poder insertar variables con ${...}
               title: `CI Build Status: ${status.toUpperCase()}`,
               summary: `El workflow #${context.runNumber} finalizó con estado: **${status}**.`
             }
