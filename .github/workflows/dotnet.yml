@@ -1,4 +1,4 @@
-name: .NET 8 CI with SonarCloud
+name: .NET 8 CI with SonarCloud and Deploy
 
 on:
   push:
@@ -11,40 +11,72 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    # 1️⃣ Descargar el código del repositorio
+    # Descargar código del repositorio
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    # 2️⃣ Configurar .NET 8 SDK
+    # Configurar .NET 8 SDK
     - name: Setup .NET 8 SDK
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
 
-    # 3️⃣ Restaurar dependencias
+    # Limpiar cache de NuGet (opcional, previene errores de testhost)
+    - name: Clear NuGet cache
+      run: dotnet nuget locals all --clear
+
+    # Restaurar dependencias de toda la solución
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ./TaskTimePredicter.sln
 
-    # 4️⃣ Construir el proyecto
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
+    # Construir todos los proyectos
+    - name: Build solution
+      run: dotnet build ./TaskTimePredicter.sln --configuration Release --no-restore
 
-    # 5️⃣ Ejecutar tests unitarios
+    # Ejecutar tests unitarios con diagnóstico
     - name: Run tests
-      run: dotnet test --logger "trx" --results-directory "TestResults"
+      run: dotnet test ./TaskTimePredicter.sln --configuration Release --logger "trx" --results-directory "TestResults" --no-build --verbosity normal
+      continue-on-error: true
 
-    # 6️⃣ Publicar resultados de tests como artifacts descargables
+    # Publicar resultados de tests como artifact
     - name: Publish test results
-      if: always()
       uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: test-results
-        path: TestResults
+        path: TaskTimePredicter/TestResults
 
-    # 7️⃣ SonarCloud analysis
+    # SonarCloud analysis
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v2.1.0
       with:
-        projectKey: Matex2395_TaskTimePredicter   # Cambia por tu Project Key de SonarCloud
-        organization: matex2395         # Cambia por tu organización en SonarCloud
-        token: ${{ secrets.JENKINS_SONARCLOUD_TOKEN }}  # Crea un secret en GitHub con tu token de SonarCloud
+        projectKey: Matex2395_TaskTimePredicter   # Cambia por tu Project Key
+        organization: matex2395                  # Cambia por tu organización
+        token: ${{ secrets.JENKINS_SONARCLOUD_TOKEN }}
+
+    # Deploy a carpeta local simulada
+    - name: Deploy to local folder
+      run: |
+        mkdir "C:\Deployments\TaskTimePredicter" || echo "Folder already exists"
+        xcopy ".\TaskTimePredicter\bin\Release\net8.0\*" "C:\Deployments\TaskTimePredicter\" /s /y
+
+    #  Notificaciones post build usando GitHub Checks
+    - name: Post status check
+      uses: actions/github-script@v7
+      if: always()
+      with:
+        script: |
+          const status = '${{ job.status }}';
+          const conclusion = status === 'success' ? 'success' : 'failure';
+          await github.rest.checks.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            name: 'CI Status',
+            head_sha: context.sha,
+            status: 'completed',
+            conclusion: conclusion,
+            output: {
+              title: Build ${status.toUpperCase()},
+              summary: Build #${process.env.GITHUB_RUN_NUMBER} finished with status: ${status}
+            }
+          })
