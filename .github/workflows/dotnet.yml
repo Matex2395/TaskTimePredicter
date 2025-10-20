@@ -48,33 +48,28 @@ jobs:
         name: test-results
         path: TestResults
 
-    # 7️⃣ SonarCloud analysis (Windows compatible)
-    - name: SonarCloud Scan
-      run: |
-        dotnet tool install --global dotnet-sonarscanner
-        dotnet sonarscanner begin /k:"Matex2395_TaskTimePredicter" /o:"matex2395" /d:sonar.login="${{ secrets.JENKINS_SONARCLOUD_TOKEN }}"
-        dotnet build ./TaskTimePredicter.sln --no-restore
-        dotnet sonarscanner end /d:sonar.login="${{ secrets.JENKINS_SONARCLOUD_TOKEN }}"
-    
-
-    # 8️⃣ Deploy simulado a máquina local
+    # 8️⃣ Deploy simulado (SOLO EN CASO DE ÉXITO)
     - name: Simulated Deploy
+      if: success() 
       run: |
         mkdir $env:DEPLOY_PATH -Force
-        Copy-Item -Path .\TaskTimePredicter\bin\Release\net8.0\* -Destination $env:DEPLOY_PATH -Recurse -Force
+        Copy-Item -Path .\bin\Release\net8.0\* -Destination $env:DEPLOY_PATH -Recurse -Force
         Write-Host "Deploy completado en $env:DEPLOY_PATH"
 
-    # 9️⃣ Notificación de estado a GitHub
+    # 9️⃣ Notificación de fallo 
+    - name: Notify on failure
+      if: failure()
+      run: |
+        Write-Host "El workflow ha fallado. Revisa los logs de los pasos anteriores para más detalles."
+        
+    # 1️⃣0️⃣ Notificación de estado a GitHub (SIEMPRE)
     - name: Post CI status
       uses: actions/github-script@v7
-      if: always() # Se ejecuta siempre para reportar el estado, incluso si hay fallos
+      if: always()
       with:
         script: |
-          // 1. Obtenemos el estado final del job (puede ser 'success' o 'failure')
           const status = '${{ job.status }}';
           const conclusion = status === 'success' ? 'success' : 'failure';
-
-          // 2. Creamos un "Check Run" usando la API de GitHub
           await github.rest.checks.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
