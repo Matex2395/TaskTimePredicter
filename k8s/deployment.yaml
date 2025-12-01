@@ -16,4 +16,4 @@ spec:
         - name: app
           image: matex2395/task-time-predicter:latest # Usuario DockerHub
           ports:
-            - containerPort: 80
+            - containerPort: 8080
