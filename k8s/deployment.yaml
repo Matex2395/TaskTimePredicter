@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-time-predicter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: task-time-predicter
+  template:
+    metadata:
+      labels:
+        app: task-time-predicter
+    spec:
+      containers:
+        - name: app
+          image: matex2395/task-time-predicter:latest # Usuario DockerHub
+          ports:
+            - containerPort: 80
