@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using LaunchDarkly.Sdk
+@using LaunchDarkly.Sdk.Server
+@inject LdClient LdClient
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -43,9 +47,24 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Quests" asp-action="Index">Tareas</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Quests" asp-action="Analyze">Análisis Proyectos y Tareas</a>
-                        </li>
+
+                        @* --- INICIO LOGICA FEATURE FLAG --- *@
+                        @{
+                            // Evaluamos la bandera usando TU KEY: "new-algo-enabled"
+                            var userName = User.Identity?.Name ?? "usuario-anonimo";
+                            var context = LaunchDarkly.Sdk.Context.Builder(userName).Name(userName).Build();
+                            var showAnalysisLink = LdClient.BoolVariation("new-algo-enabled", context, false);
+                        }
+
+                        @if (showAnalysisLink)
+                        {
+                            @* Si es TRUE (ON), mostramos el botón *@
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Quests" asp-action="Analyze">Análisis Proyectos y Tareas</a>
+                            </li>
+                        }
+                        @* --- FIN LOGICA FEATURE FLAG --- *@
+
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Quests" asp-action="Statistics">Estadísticas Proyectos</a>
                         </li>

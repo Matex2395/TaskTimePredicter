@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TaskTimePredicter.Data;
 using TaskTimePredicter.Models;
+using LaunchDarkly.Sdk;
+using LaunchDarkly.Sdk.Server;
 
 namespace TaskTimePredicter.Controllers
 {
@@ -16,10 +18,14 @@ namespace TaskTimePredicter.Controllers
     public class QuestsController : Controller
     {
         private readonly AppDbContext _context;
+        // Variable para LaunchDarkly
+        private readonly LdClient _ldClient;
 
-        public QuestsController(AppDbContext context)
+        // Se inyecta el cliente en el Constructor
+        public QuestsController(AppDbContext context, LdClient ldClient)
         {
             _context = context;
+            _ldClient = ldClient;
         }
 
         // GET: Quests
@@ -387,6 +393,23 @@ namespace TaskTimePredicter.Controllers
         // CORE
         public IActionResult Analyze()
         {
+            // --- INICIO BLOQUEO FEATURE FLAG ---
+
+            // 1. Se obtiene el usuario actual (o "anonimo" si falla)
+            var userName = User.Identity?.Name ?? "usuario-anonimo";
+            var context = Context.Builder(userName).Name(userName).Build();
+
+            // 2. Se usa KEY de LAUNCHDARKLY para verificar el estado de la FLAG
+            bool showAnalysis = _ldClient.BoolVariation("new-algo-enabled", context, false);
+
+            if (!showAnalysis)
+            {
+                // Si la bandera está OFF en LaunchDarkly, se redirige a Home
+                TempData["ErrorMessage"] = "El módulo de análisis está deshabilitado temporalmente.";
+                return RedirectToAction("Index", "Home");
+            }
+            // --- FIN BLOQUEO FEATURE FLAG ---
+
             var proyectos = _context.Projects.ToList();
             var categorias = _context.Categories.ToList();
 
